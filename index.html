@@ -130,6 +130,7 @@
 
 <body>
 
+  <!-- Tela inicial com botão -->
   <div class="container" id="inicio">
     <button id="botao-costurado">
       <img src="imagens/botao-costurado.png" alt="Botão Costurado">
@@ -137,9 +138,10 @@
     <div class="texto-abaixo-botao">❤️</div>
   </div>
 
+  <!-- Conteúdo romântico com frase, vídeo e música -->
   <div class="conteudo-romantico" id="conteudo">
     <div class="frase">Feliz aniversário linduxa, eu te amo em todos os infinitos! 🌌</div>
-    <video id="video" src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
+    <video src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
     <div class="frase">Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖</div>
 
     <div class="audio-player">
@@ -156,27 +158,30 @@
     const musica = document.getElementById('musica');
     const playPauseBtn = document.getElementById('playPauseBtn');
 
-    // Ao clicar no botão costurado
+    let musicaIniciada = false;
+
     botao.addEventListener('click', () => {
       inicio.style.display = 'none';
       conteudo.style.display = 'flex';
 
-      // Começa a tocar a música automaticamente
-      musica.muted = false;
-      musica.play().then(() => {
-        playPauseBtn.textContent = '⏸️';
-      }).catch(err => {
-        console.log("Erro ao tentar tocar música:", err);
-      });
+      // Tocar música só se ainda não começou
+      if (!musicaIniciada) {
+        musica.muted = false;
+        musica.play().then(() => {
+          musicaIniciada = true;
+          playPauseBtn.textContent = '⏸️';
+        }).catch((err) => {
+          console.log("Erro ao tocar a música:", err);
+        });
+      }
     });
 
-    // Controle do botão de play/pause
     playPauseBtn.addEventListener('click', () => {
       if (musica.paused) {
         musica.play().then(() => {
           playPauseBtn.textContent = '⏸️';
-        }).catch(err => {
-          console.log("Erro ao tentar dar play:", err);
+        }).catch((err) => {
+          console.log("Erro ao dar play:", err);
         });
       } else {
         musica.pause();
