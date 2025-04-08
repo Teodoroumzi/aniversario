@@ -179,6 +179,20 @@
       }
     }
 
+    .aviso-musica {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff8dc;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      display: none;
+      z-index: 100;
+    }
+
     @media (max-width: 768px) {
       .frase {
         font-size: 1.2em;
@@ -206,12 +220,15 @@
   <div class="conteudo-romantico" id="conteudo">
     <div class="frase">Feliz aniversário linduxa, eu te amo em todos os infinitos! 🌌</div>
     <video id="video" src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
-    <div class="frase-abaixo-video">Te amo pra todo sempre e obrigado por ser essa pessoa incrivel pra mim. Com amor e do seu amor, theo. 💖</div>
+    <div class="frase-abaixo-video">Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖</div>
+
     <div class="audio-player">
-      <button id="playPauseBtn">⏸️</button>
-      <audio id="musica" src="musicas/musica.mp3"></audio>
+      <button id="playPauseBtn">▶️</button>
+      <audio id="musica" preload="auto" src="musicas/musica.mp3"></audio>
     </div>
+
     <div class="explosao-tela" id="explosaoTela"></div>
+    <div class="aviso-musica" id="avisoMusica">Toque no botão para ativar o som 🎵</div>
   </div>
 
   <script>
@@ -221,12 +238,18 @@
     const musica = document.getElementById('musica');
     const playPauseBtn = document.getElementById('playPauseBtn');
     const explosaoTela = document.getElementById('explosaoTela');
+    const avisoMusica = document.getElementById('avisoMusica');
 
     botao.addEventListener('click', () => {
+      musica.load();
+
       musica.play().then(() => {
+        playPauseBtn.textContent = '⏸️';
+        avisoMusica.style.display = 'none';
         console.log("Música tocando com sucesso!");
       }).catch(err => {
-        console.log("Erro ao tentar tocar música:", err);
+        console.warn("Autoplay bloqueado. Usuário precisa dar play manualmente.");
+        avisoMusica.style.display = 'block';
       });
 
       inicio.style.display = 'none';
@@ -251,8 +274,10 @@
       if (musica.paused) {
         musica.play().then(() => {
           playPauseBtn.textContent = '⏸️';
+          avisoMusica.style.display = 'none';
         }).catch(err => {
           console.log('Erro ao tentar dar play:', err);
+          avisoMusica.style.display = 'block';
         });
       } else {
         musica.pause();
