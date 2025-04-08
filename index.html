@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="imagens/favicon.png">
   <title>Para você 💙</title>
   <style>
     body,
@@ -103,26 +102,34 @@
     }
 
     .audio-player {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       margin-top: 20px;
     }
 
     .audio-player button {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: none;
+      background-color: rgba(255, 255, 255, 0.15);
+      border: 2px solid #ffdd99;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      color: white;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      color: #ffdd99;
       cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .audio-player button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
 
     @media (max-width: 768px) {
       .frase {
         font-size: 1.2em;
+      }
+
+      .audio-player button {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
       }
     }
   </style>
@@ -130,7 +137,7 @@
 
 <body>
 
-  <!-- Tela inicial com botão -->
+  <!-- Tela inicial -->
   <div class="container" id="inicio">
     <button id="botao-costurado">
       <img src="imagens/botao-costurado.png" alt="Botão Costurado">
@@ -138,7 +145,7 @@
     <div class="texto-abaixo-botao">❤️</div>
   </div>
 
-  <!-- Conteúdo romântico com frase, vídeo e música -->
+  <!-- Tela após clique -->
   <div class="conteudo-romantico" id="conteudo">
     <div class="frase">Feliz aniversário linduxa, eu te amo em todos os infinitos! 🌌</div>
     <video src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
@@ -164,14 +171,13 @@
       inicio.style.display = 'none';
       conteudo.style.display = 'flex';
 
-      // Tocar música só se ainda não começou
       if (!musicaIniciada) {
         musica.muted = false;
         musica.play().then(() => {
           musicaIniciada = true;
           playPauseBtn.textContent = '⏸️';
-        }).catch((err) => {
-          console.log("Erro ao tocar a música:", err);
+        }).catch(err => {
+          console.log('Erro ao iniciar música:', err);
         });
       }
     });
@@ -180,8 +186,6 @@
       if (musica.paused) {
         musica.play().then(() => {
           playPauseBtn.textContent = '⏸️';
-        }).catch((err) => {
-          console.log("Erro ao dar play:", err);
         });
       } else {
         musica.pause();
