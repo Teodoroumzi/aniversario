@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="imagens" href="imagens/favicon.png">
+  <link rel="icon" href="imagens/favicon.png">
   <title>Para você 💙</title>
   <style>
     body,
@@ -15,8 +15,7 @@
       font-family: 'Trebuchet MS', sans-serif;
       background-color: #0b0c2a;
       color: #f1f1f1;
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     .container,
@@ -33,6 +32,7 @@
       flex-direction: column;
       box-sizing: border-box;
       padding: 20px;
+      text-align: center;
     }
 
     #botao-costurado {
@@ -43,7 +43,6 @@
       width: 120px;
       height: 120px;
       animation: flutuar 2s ease-in-out infinite;
-      position: relative;
     }
 
     #botao-costurado img {
@@ -73,15 +72,13 @@
 
     .conteudo-romantico {
       display: none;
-      flex-direction: column;
-      text-align: center;
       animation: aparecer 1s ease forwards;
     }
 
     @keyframes aparecer {
       from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.95);
       }
 
       to {
@@ -96,109 +93,43 @@
       margin-bottom: 20px;
     }
 
-    .frase-abaixo-video {
-      margin-top: 20px;
-      font-size: 1.2em;
-      color: #ffccaa;
-    }
-
     video {
       width: 100%;
       max-width: 600px;
       height: auto;
       border-radius: 20px;
       box-shadow: 0 0 20px #000;
-      opacity: 0;
-      transform: scale(0.95);
-      animation: abrirVideo 1s ease forwards;
-      animation-delay: 0.2s;
+      margin-bottom: 20px;
     }
 
-    @keyframes abrirVideo {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .aviso-musica {
-      position: relative;
-      top: 20px;
-      margin-top: 20px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff8dc;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 1em;
-      display: none;
-      z-index: 100;
+    .audio-player {
       display: flex;
       align-items: center;
-      gap: 10px;
       justify-content: center;
+      margin-top: 20px;
     }
 
-    .aviso-musica button {
-      background: none;
-      border: 2px solid #fff8dc;
-      color: #fff8dc;
-      font-size: 1.1em;
+    .audio-player button {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      color: white;
       cursor: pointer;
-    }
-
-    .explosao-tela {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 150px;
-      height: 150px;
-      margin-left: -75px;
-      margin-top: -75px;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    .explosao-tela span {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background: yellow;
-      border-radius: 50%;
-      animation: explodir-botao 0.8s ease-out forwards;
-    }
-
-    @keyframes explodir-botao {
-      from {
-        transform: translate(0, 0);
-        opacity: 1;
-      }
-
-      to {
-        transform: translate(var(--x), var(--y));
-        opacity: 0;
-      }
     }
 
     @media (max-width: 768px) {
       .frase {
         font-size: 1.2em;
       }
-
-      .frase-abaixo-video {
-        font-size: 1em;
-      }
-
-      video {
-        width: 100%;
-      }
     }
   </style>
 </head>
 
 <body>
+
   <div class="container" id="inicio">
     <button id="botao-costurado">
       <img src="imagens/botao-costurado.png" alt="Botão Costurado">
@@ -209,17 +140,13 @@
   <div class="conteudo-romantico" id="conteudo">
     <div class="frase">Feliz aniversário linduxa, eu te amo em todos os infinitos! 🌌</div>
     <video id="video" src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
-    <div class="frase-abaixo-video">
-      Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖
+    <div class="frase">Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖</div>
+
+    <div class="audio-player">
+      <button id="playPauseBtn">⏸️</button>
     </div>
 
-    <div class="aviso-musica" id="avisoMusica">
-      Toque no botão para ativar o som 🎵
-      <button id="playPauseBtn">▶️</button>
-    </div>
-
-    <audio id="musica" preload="auto" src="musicas/musica.mp3"></audio>
-    <div class="explosao-tela" id="explosaoTela"></div>
+    <audio id="musica" src="musicas/musica.mp3" preload="auto"></audio>
   </div>
 
   <script>
@@ -228,55 +155,36 @@
     const conteudo = document.getElementById('conteudo');
     const musica = document.getElementById('musica');
     const playPauseBtn = document.getElementById('playPauseBtn');
-    const explosaoTela = document.getElementById('explosaoTela');
-    const avisoMusica = document.getElementById('avisoMusica');
 
-    let musicaTocando = false;
-
+    // Ao clicar no botão costurado
     botao.addEventListener('click', () => {
       inicio.style.display = 'none';
       conteudo.style.display = 'flex';
 
+      // Começa a tocar a música automaticamente
       musica.muted = false;
       musica.play().then(() => {
-        musicaTocando = true;
         playPauseBtn.textContent = '⏸️';
-        avisoMusica.style.display = 'none';
-      }).catch(() => {
-        avisoMusica.style.display = 'flex';
+      }).catch(err => {
+        console.log("Erro ao tentar tocar música:", err);
       });
-
-      explodirTela();
     });
 
+    // Controle do botão de play/pause
     playPauseBtn.addEventListener('click', () => {
-      musica.muted = false;
       if (musica.paused) {
         musica.play().then(() => {
           playPauseBtn.textContent = '⏸️';
-          avisoMusica.style.display = 'none';
-        }).catch(() => {
-          avisoMusica.style.display = 'flex';
+        }).catch(err => {
+          console.log("Erro ao tentar dar play:", err);
         });
       } else {
         musica.pause();
         playPauseBtn.textContent = '▶️';
       }
     });
-
-    function explodirTela() {
-      for (let i = 0; i < 80; i++) {
-        const p = document.createElement('span');
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = Math.random() * 300 + 100;
-        p.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
-        p.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
-        p.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        explosaoTela.appendChild(p);
-        setTimeout(() => p.remove(), 1000);
-      }
-    }
   </script>
+
 </body>
 
 </html>
