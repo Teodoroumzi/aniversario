@@ -121,29 +121,32 @@
       }
     }
 
-    .audio-player {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      z-index: 10;
-      background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      padding: 10px;
+    .aviso-musica {
+      position: relative;
+      top: 20px;
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff8dc;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1em;
+      display: none;
+      z-index: 100;
       display: flex;
       align-items: center;
+      gap: 10px;
       justify-content: center;
     }
 
-    .audio-player button {
+    .aviso-musica button {
       background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
+      border: 2px solid #fff8dc;
+      color: #fff8dc;
+      font-size: 1.1em;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
       cursor: pointer;
-    }
-
-    .audio-player audio {
-      display: none;
     }
 
     .explosao-tela {
@@ -179,20 +182,6 @@
       }
     }
 
-    .aviso-musica {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff8dc;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 1em;
-      display: none;
-      z-index: 100;
-    }
-
     @media (max-width: 768px) {
       .frase {
         font-size: 1.2em;
@@ -220,15 +209,17 @@
   <div class="conteudo-romantico" id="conteudo">
     <div class="frase">Feliz aniversário linduxa, eu te amo em todos os infinitos! 🌌</div>
     <video id="video" src="videos/video-romantico.mp4" autoplay muted loop playsinline></video>
-    <div class="frase-abaixo-video">Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖</div>
-
-    <div class="audio-player">
-      <button id="playPauseBtn">▶️</button>
-      <audio id="musica" preload="auto" src="musicas/musica.mp3"></audio>
+    <div class="frase-abaixo-video">
+      Te amo pra todo sempre e obrigado por ser essa pessoa incrível pra mim. Com amor e do seu amor, theo. 💖
     </div>
 
+    <div class="aviso-musica" id="avisoMusica">
+      Toque no botão para ativar o som 🎵
+      <button id="playPauseBtn">▶️</button>
+    </div>
+
+    <audio id="musica" preload="auto" src="musicas/musica.mp3"></audio>
     <div class="explosao-tela" id="explosaoTela"></div>
-    <div class="aviso-musica" id="avisoMusica">Toque no botão para ativar o som 🎵</div>
   </div>
 
   <script>
@@ -240,21 +231,37 @@
     const explosaoTela = document.getElementById('explosaoTela');
     const avisoMusica = document.getElementById('avisoMusica');
 
+    let musicaTocando = false;
+
     botao.addEventListener('click', () => {
-      musica.load();
-
-      musica.play().then(() => {
-        playPauseBtn.textContent = '⏸️';
-        avisoMusica.style.display = 'none';
-        console.log("Música tocando com sucesso!");
-      }).catch(err => {
-        console.warn("Autoplay bloqueado. Usuário precisa dar play manualmente.");
-        avisoMusica.style.display = 'block';
-      });
-
       inicio.style.display = 'none';
       conteudo.style.display = 'flex';
+
+      musica.muted = false;
+      musica.play().then(() => {
+        musicaTocando = true;
+        playPauseBtn.textContent = '⏸️';
+        avisoMusica.style.display = 'none';
+      }).catch(() => {
+        avisoMusica.style.display = 'flex';
+      });
+
       explodirTela();
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      musica.muted = false;
+      if (musica.paused) {
+        musica.play().then(() => {
+          playPauseBtn.textContent = '⏸️';
+          avisoMusica.style.display = 'none';
+        }).catch(() => {
+          avisoMusica.style.display = 'flex';
+        });
+      } else {
+        musica.pause();
+        playPauseBtn.textContent = '▶️';
+      }
     });
 
     function explodirTela() {
@@ -269,21 +276,6 @@
         setTimeout(() => p.remove(), 1000);
       }
     }
-
-    playPauseBtn.addEventListener('click', () => {
-      if (musica.paused) {
-        musica.play().then(() => {
-          playPauseBtn.textContent = '⏸️';
-          avisoMusica.style.display = 'none';
-        }).catch(err => {
-          console.log('Erro ao tentar dar play:', err);
-          avisoMusica.style.display = 'block';
-        });
-      } else {
-        musica.pause();
-        playPauseBtn.textContent = '▶️';
-      }
-    });
   </script>
 </body>
 
